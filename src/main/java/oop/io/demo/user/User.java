@@ -10,23 +10,32 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
 @Document("User")
 public class User {
+
     @Id
-	private String userId;
+    private String userId;
+    @Indexed(unique=true)
 	private String email;
 	private String firstName;
 	private String lastName;
-	private String staffType;
+	private USERTYPE userType;
+    private String password;
 
+    public User() {}
+    public User(String email, String password) {
+        this.email= email;
+        this.password= password;
+    }
 	public User(String email, String firstName, String lastName){
         this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
-		this.staffType = "Staff";
+		this.userType = USERTYPE.STAFF;
     }
 
     public String getEmail() {
@@ -41,16 +50,21 @@ public class User {
         return lastName;
     }
 
-    public String getStaffType() {
-        return staffType;
+    public USERTYPE getUserType() {
+        return userType;
     }
 
-    public String getName() {
-        return firstName + lastName;
-    }
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+    
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public void setFirstName(String firstName) {
@@ -61,8 +75,11 @@ public class User {
         this.lastName = lastName;
     }
 
-    public void setStaffType(String staffType) {
-        this.staffType = staffType;
+    public void setUserType(USERTYPE userType) {
+        this.userType = userType;
+    }
+    public String getUserId() {
+        return userId;
     }
 
 
