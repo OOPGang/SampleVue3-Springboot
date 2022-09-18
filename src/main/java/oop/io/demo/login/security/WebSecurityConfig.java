@@ -74,13 +74,13 @@ public class WebSecurityConfig {
           .antMatchers(h2ConsolePath + "/**").permitAll()
           .anyRequest().authenticated();
       
-   // fix H2 database console: Refused to display ' in a frame because it set 'X-Frame-Options' to 'deny'
-      http.headers().frameOptions().sameOrigin();
+        // fix H2 database console: Refused to display ' in a frame because it set 'X-Frame-Options' to 'deny'
+        //http.headers().frameOptions().sameOrigin();
       
-      http.authenticationProvider(authenticationProvider());
+        //http.authenticationProvider(authenticationProvider());
   
-      http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
       
-      return http.build();
+        return http.build();
     }
 }

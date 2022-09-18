@@ -1,8 +1,11 @@
 package oop.io.demo.login.security.services;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -46,7 +49,8 @@ public class UserDetailImplementation implements UserDetails {
   
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        Collection<? extends GrantedAuthority> authorities = new HashSet<GrantedAuthority>();
+        List<GrantedAuthority> authorities = new ArrayList<>();
+        authorities.add(authority);
         return authorities;
     }
 

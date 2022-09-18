@@ -3,23 +3,34 @@ package oop.io.demo.user;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import io.micrometer.core.ipc.http.HttpSender.Response;
-import oop.io.demo.user.UserRepository;
-import oop.io.demo.user.User;
+import oop.io.demo.login.security.jwt.JwtUtils;
 
+@CrossOrigin(maxAge = 3600)
 @RestController
 public class UserController {
+
+    @Autowired
+    AuthenticationManager authenticationManager;
+
+    @Autowired
+    PasswordEncoder encoder;
+
+    @Autowired
+    JwtUtils jwtUtils;
 
     private final UserRepository repository;
 
@@ -38,7 +49,7 @@ public class UserController {
         if(user.isPresent()){
             return ResponseEntity.ok(user);
         }
-        else{
+        else {
             return ResponseEntity.ok("A user with email:"+ email +" was not found.");
         }
     }
@@ -88,7 +99,7 @@ public class UserController {
             return ResponseEntity.ok("Successfully deleted.");
         }
         else {
-            return ResponseEntity.ok("User with email: "+ email+" was not found.");
+            return ResponseEntity.ok("User with email: " + email+ " was not found.");
         }
     }
     @DeleteMapping("/users")

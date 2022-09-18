@@ -2,13 +2,31 @@ package oop.io.demo.login.payload.response;
 
 import org.springframework.security.core.GrantedAuthority;
 
-public class UserInfoResponse {
+public class JwtResponse {
     private String id;
 	private String email;
 	private GrantedAuthority usertype;
+    private String jwt;
 
-	public UserInfoResponse(String string,  String email, GrantedAuthority usertype) {
-		this.id = string;
+	public GrantedAuthority getUsertype() {
+        return usertype;
+    }
+
+    public void setUsertype(GrantedAuthority usertype) {
+        this.usertype = usertype;
+    }
+
+    public String getJwt() {
+        return jwt;
+    }
+
+    public void setJwt(String jwt) {
+        this.jwt = jwt;
+    }
+
+    public JwtResponse(String jwt, String string,  String email, GrantedAuthority usertype) {
+		this.jwt = jwt;
+        this.id = string;
 		this.email = email;
 		this.usertype = usertype;
 	}

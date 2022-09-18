@@ -5,6 +5,8 @@ import java.util.Date;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.security.core.Authentication;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -19,33 +21,22 @@ import io.jsonwebtoken.*;
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    @Value("${bezkoder.app.jwtSecret}")
-    private static String jwtSecret;
+    //@Value("${ams.app.jwtSecret}")
+    private static String jwtSecret= "yl123";
 
-    @Value("${bezkoder.app.jwtExpirationMs}")
-    private static int jwtExpirationMs;
+    //@Value("${ams.app.jwtExpirationMs}")
+    private static int jwtExpirationMs = 86400000;
 
-    @Value("${bezkoder.app.jwtCookieName}")
-    private static String jwtCookie;
 
-    public String getJwtFromCookies(HttpServletRequest request) {
-        Cookie cookie = WebUtils.getCookie(request, jwtCookie);
-        if (cookie != null) {
-        return cookie.getValue();
-        } else {
-        return null;
-        }
-    }
+    public String generateJwtToken(Authentication authentication) {
+        UserDetailImplementation userPrincipal = (UserDetailImplementation) authentication.getPrincipal();
 
-    public static ResponseCookie generateJwtCookie(UserDetailImplementation userPrincipal) {
-        String jwt = generateTokenFromEmail(userPrincipal.getEmail());
-        ResponseCookie cookie = ResponseCookie.from(jwtCookie, jwt).path("/api").maxAge(24 * 60 * 60).httpOnly(true).build();
-        return cookie;
-    }
-
-    public ResponseCookie getCleanJwtCookie() {
-        ResponseCookie cookie = ResponseCookie.from(jwtCookie, null).path("/api").build();
-        return cookie;
+		return Jwts.builder()
+				.setSubject((userPrincipal.getEmail()))
+				.setIssuedAt(new Date())
+				.setExpiration(new Date((new Date()).getTime() + jwtExpirationMs))
+				.signWith(SignatureAlgorithm.HS512, jwtSecret)
+				.compact();
     }
 
     public String getEmailFromJwtToken(String token) {
