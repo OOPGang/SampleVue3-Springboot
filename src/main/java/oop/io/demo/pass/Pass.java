@@ -7,23 +7,30 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("Pass")
+
+@Document(collection="Pass")
 public class Pass {
+
+    @Id
     private String PassID;
+    @Indexed(unique=true)
     private String PassName;
-    private int PassAvailability;
+    private int Guest;
+    // private int PassAvailability;
 
     public Pass(){
         
     }
 
 
-    public Pass(String PassID, String PassName, int PassAvailability) {
-        this.PassID = PassID;
+    public Pass(String PassName, int Guest) {
+        // this.PassID = PassID;
         this.PassName = PassName;
-        this.PassAvailability = PassAvailability;
+        this.Guest=Guest;
+        // this.PassAvailability = PassAvailability;
     }
          /**
      * Gets the List of passes 
@@ -33,15 +40,19 @@ public class Pass {
         return PassName;
     }
 
+    public int GetGuest(){
+        return Guest;
+    }
+
      /**
      * Gets the number of passes left
      * @return the attraction availability
      */
-    public int GetAvailability() {
-        return PassAvailability;
-    }
+    // public int GetAvailability() {
+    //     return PassAvailability;
+    // }
 
-    public String GetId() {
+    public String GetPassId() {
         return PassID;
     }
 
@@ -50,12 +61,22 @@ public class Pass {
         this.PassName = PassName;
     }
 
-    public void SetID(String PassID) {
-        this.PassID=PassID;
+    public void SetGuest(int Guest){
+        this.Guest=Guest;
     }
-    public void SetAvailability(int PassAvailability) {
-        this.PassAvailability=PassAvailability;
+
+
+    public boolean isPresent() {
+        return false;
     }
+    
+
+    // public void SetID(String PassID) {
+    //     this.PassID=PassID;
+    // }
+    // public void SetAvailability(int PassAvailability) {
+    //     this.PassAvailability=PassAvailability;
+    // }
 
 
    
