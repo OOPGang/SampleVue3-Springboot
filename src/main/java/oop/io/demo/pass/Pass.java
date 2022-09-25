@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 
-@Document(collection="Pass")
+@Document("Pass")
 public class Pass {
 
     @Id
@@ -19,7 +19,7 @@ public class Pass {
     @Indexed(unique=true)
     private String PassName;
     private int Guest;
-    // private int PassAvailability;
+
 
     public Pass(){
         
@@ -29,7 +29,7 @@ public class Pass {
     public Pass(String PassName, int Guest) {
         // this.PassID = PassID;
         this.PassName = PassName;
-        this.Guest=Guest;
+        this.Guest=3;
         // this.PassAvailability = PassAvailability;
     }
          /**
