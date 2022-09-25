@@ -35,7 +35,8 @@ public class PassController {
             if (Passname== null)
               passRepository.findAll().forEach(pass::add);
             else
-              passRepository.findByPassContaining(Passname).forEach(pass::add);
+              // passRepository.findByPassContaining(Passname).forEach(pass::add);
+              System.out.println("Test");
         
             if (pass.isEmpty()) {
               return new ResponseEntity<>(HttpStatus.NO_CONTENT);
