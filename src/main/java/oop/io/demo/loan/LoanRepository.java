@@ -10,7 +10,7 @@ public interface LoanRepository extends MongoRepository<Loan, String>{
     //Optional<List<Loan>> findByLoanStatus(LOANSTATUS status);
     //Optional<Loan> findByEmail(String email);
     //Optional<Loan> findByPass(String passNo);
-    Optional <Loan> getByPass(String passNo);
+    // Optional <Loan> getByPass(String passNo);
     Loan getByID(String loanID);
     //boolean existsByEmail(String email);
 }

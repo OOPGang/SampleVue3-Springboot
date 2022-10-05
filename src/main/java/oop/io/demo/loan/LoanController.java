@@ -18,7 +18,7 @@ public class LoanController {
     @Autowired
     private LoanService loanService;
 
-    @PostMapping("/loan/add")
+    @PostMapping("/loan")
     public String addBooking(@RequestBody Loan loan){
         return loanService.addBooking(loan);
     }
@@ -27,14 +27,14 @@ public class LoanController {
     public String deleteBooking(@PathVariable String loanID){
         return loanService.deleteBooking(loanID);
     }
-
+    
     //loan controller should:
     //have method endpoint: "newbooking" calls method in loanservice to make new booking
     ////access: both staff and admin can access to make booking for themself- userEmail automatically assigned based on their identity
 
     //have method endpoint: "cancelbooking" calls loanservice to cancel booking
     ////access: both staff and admin
-
+    
     //have method to allow user to report loss of card (associated with booking?) endpoint: reportloss
 
     //have method endpoint: "loans" calls loanservice to retrieve loan for a user by email
