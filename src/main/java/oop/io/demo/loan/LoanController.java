@@ -1,20 +1,38 @@
 package oop.io.demo.loan;
 
+import java.util.List;
+import java.util.Optional;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import oop.io.demo.auth.security.jwt.JwtUtils;
+
 public class LoanController {
-    //loan controller should:
-    //have method endpoint: "newbooking" calls method in loanservice to make new booking
-    ////access: both staff and admin can access to make booking for themself- userEmail automatically assigned based on their identity
 
-    //have method endpoint: "cancelbooking" calls loanservice to cancel booking
-    ////access: both staff and admin
+    @Autowired
+    AuthenticationManager authenticationManager;    
+    @Autowired
+    PasswordEncoder encoder;
+    @Autowired
+    JwtUtils jwtUtils;
 
-    //have method to allow user to report loss of card (associated with booking?) endpoint: reportloss
-
-    //have method endpoint: "loans" calls loanservice to retrieve loan for a user by email
-    ////access: staff can only see their own but admin can see for any selected user
-
-    //have method to retrieve all bookings made on a certain date for a certain attraction
-    ////access: all because it is for calendar display- should this be under service then?
     
+    private final LoanRepository repository;
+    
+        public LoanController(LoanRepository loanRepository) {
+            this.repository = loanRepository;
+        }
     
 }
