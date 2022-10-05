@@ -2,7 +2,11 @@ package oop.io.demo.loan;
 
 import java.util.Date;
 
+import org.springframework.data.annotation.Id;
+
 public class Loan {
+    @Id
+    private String loanID;
     private Date loanDate;
     private Date bookingMadeDate;
     private String attractionName;
