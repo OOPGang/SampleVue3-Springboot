@@ -5,6 +5,13 @@ import java.util.Date;
 import org.springframework.data.annotation.Id;
 
 public class Loan {
+
+
+    public Loan(){
+
+    }
+
+    
     @Id
     private String loanID;
     private Date loanDate;

@@ -43,19 +43,12 @@ public class Pass {
         return Guest;
     }
 
-     /**
-     * Gets the number of passes left
-     * @return the attraction availability
-     */
-    // public int GetAvailability() {
-    //     return PassAvailability;
-    // }
 
     public String GetPassId() {
         return PassID;
     }
 
-
+    
     public void SetPasses(String PassName) {
         this.PassName = PassName;
     }

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import oop.io.demo.loan.LoanRepository;
 
 @Service
+//Service component is used to annotate class at service layer, build business logic
 public class LoanService {
 
     @Autowired
@@ -22,7 +23,7 @@ public class LoanService {
     }
 
     public String deleteBooking(String loanID){
-        Loan loan = repository.getByID(loanID);
+        Loan loan = repository.findByLoanID(loanID);
         repository.delete(loan);
         return "Booking to " + loan.getAttractionName() + " made by " + loan.getUserEmail() + " has been deleted.";
     }
@@ -32,5 +33,7 @@ public class LoanService {
         return "";
 
     }
+
+    
     
 }
