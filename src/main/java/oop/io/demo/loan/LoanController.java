@@ -28,12 +28,17 @@ public class LoanController {
         return loanService.addBooking(loan);
     }
     
-    @DeleteMapping("/loan/all/{loanID}")
-    public String deleteBooking(@PathVariable String loanID){
-        return loanService.deleteBooking(loanID);
-    }
+    // @DeleteMapping("/loan/all/{loanID}")
+    // public String deleteBooking(@PathVariable String loanID){
+    //     return loanService.deleteBooking(loanID);
+    // }
 
-}
+
+
+
+
+    
+
     
       
 

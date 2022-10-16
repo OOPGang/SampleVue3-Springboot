@@ -36,7 +36,7 @@ public class LoanService {
             repository.save(loan);
         return "Booking to " + loan.getAttractionName() + " made by " + loan.getUserEmail() + " has been added.";
         }
-        getUserInfo(loanDate,attractionName);
+        // getUserInfo(loanDate,attractionName);
         return "Booking is unsuccessful.";
     }
 
@@ -97,19 +97,22 @@ public class LoanService {
     }
 
     //Method for getting userinfo of a loan
-    public String getUserInfo(Date loanDate, String attractionName){
-        ArrayList<Loan> loans = repository.findAllByAttraction(attractionName);
-        for (Loan loan : loans) {
-            Date checkdate = loan.getLoanDate();
-            if (checkdate == loanDate){
-                int passNo = loan.getPassNo();
-                String userEmail = loan.getUserEmail();
-                User booked_user = userRepository.findByEmail(userEmail);
-                String userName = booked_user.getName();
-                String contactNo = booked_user.getContactNo();
-                return "The booking for pass " + passNo + " is already loaned by " + userName + " (Contact No: " + contactNo +").";
+    // public String getUserInfo(Date loanDate, String attractionName){
+    //     ArrayList<Loan> loans = repository.findAllByAttraction(attractionName);
+    //     for (Loan loan : loans) {
+    //         Date checkdate = loan.getLoanDate();
+    //         if (checkdate == loanDate){
+    //             int passNo = loan.getPassNo();
+    //             String userEmail = loan.getUserEmail();
+    //             User booked_user = userRepository.findByEmail(userEmail);
+    //             String userName = booked_user.getName();
+    //             String contactNo = booked_user.getContactNo();
+    //             return "The booking for pass " + passNo + " is already loaned by " + userName + " (Contact No: " + contactNo + ")";
 
-    }
+    //         }
+    //     }
+
+    // }
 
     //Method for the user to report loss of cards
     public String ReportLoss(String userEmail, Date loanDate){
