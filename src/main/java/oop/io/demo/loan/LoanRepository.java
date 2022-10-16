@@ -1,6 +1,6 @@
 package oop.io.demo.loan;
 
-import java.util.List;
+import java.util.*;
 import java.util.Optional;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -11,7 +11,9 @@ public interface LoanRepository extends MongoRepository<Loan, String>{
     //Optional<Loan> findByEmail(String email);
     //Optional<Loan> findByPass(String passNo);
     // Optional <Loan> getByPass(String passNo);
-    Loan findByLoanID(String loanID);
+    ArrayList<Loan> findAllByEmail(String userEmail);
+    ArrayList<Loan> findAllByAttraction(String attractionName);
+    Loan findbyLoanID(String loanID);
     //boolean existsByEmail(String email);
 
 

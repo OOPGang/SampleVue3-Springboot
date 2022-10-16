@@ -24,6 +24,7 @@ public class Loan {
 
     //constructor with attributes required to create a new loan
     public Loan(Date loanDate, Date bookingMadeDate, String attractionName, String userEmail) {
+        this.loanID = userEmail + loanDate;
         this.loanDate = loanDate;
         this.bookingMadeDate = bookingMadeDate;
         this.attractionName = attractionName;
@@ -58,4 +59,6 @@ public class Loan {
     public void setStatus(LOANSTATUS status) {
         this.status = status;
     }
+
+   
 }

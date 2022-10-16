@@ -1,7 +1,6 @@
 package oop.io.demo.loan;
 
-public enum LOANSTATUS {
-    
+public enum LOANSTATUS {    
     CONFIRMED,
     CANCELLED,
     ACTIVE,
