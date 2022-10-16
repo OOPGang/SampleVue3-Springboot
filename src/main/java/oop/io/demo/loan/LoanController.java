@@ -33,6 +33,7 @@ public class LoanController {
         return loanService.deleteBooking(loanID);
     }
 
+}
     
       
 
