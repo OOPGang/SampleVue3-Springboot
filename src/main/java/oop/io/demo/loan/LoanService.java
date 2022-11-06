@@ -10,6 +10,7 @@ import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
 import oop.io.demo.pass.PASSSTATUS;
 
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Service
@@ -185,7 +186,9 @@ public class LoanService {
 
     // Method for the user to report loss of cards
     public String ReportLoss(String userEmail, Date loanDate) {
-        String checkID = userEmail + loanDate;
+        SimpleDateFormat dateFor = new SimpleDateFormat("dd/MM/yyyy");
+        String dateL = dateFor.format(loanDate);
+        String checkID = userEmail + dateL;
         Loan loan = repository.findByLoanId(checkID);
         loan.setStatus(LOANSTATUS.LOST);
 
@@ -204,7 +207,7 @@ public class LoanService {
             for (Loan loan : loans) {
                 Date checkdate = loan.getLoanDate();
                 // to check whether the loan is made for later dates
-                if (date.compareTo(checkdate) < 0) {
+                if (checkdate.after(date)) {
                     loan.setStatus(LOANSTATUS.LOST);
                 }
             }

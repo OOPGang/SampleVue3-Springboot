@@ -59,9 +59,14 @@ public class LoanController {
     @PostMapping("/cancel")
     public ResponseEntity cancellLoan(@RequestBody String loanID) {
         String cancel=new LoanService(repository,passrepository,userrepository).cancelLoan(loanID, LOANSTATUS.CANCELLED);
-        return ResponseEntity.ok("Pass has been cancelled");
+        return ResponseEntity.ok(cancel);
     }
     
+    @PostMapping("/reportloss")
+    public ResponseEntity reportLoss(@RequestBody String userEmail, Date loanDate){
+        String result= new LoanService(repository,passrepository,userrepository).ReportLoss(userEmail, loanDate);
+        return ResponseEntity.ok(result);
+    }
     // //for creating new passes for an existing attraction
     // @PostMapping("{placeOfInterest}/newpass")
     // public ResponseEntity createPasses(@PathVariable("placeOfInterest") String placeOfInterest, @RequestBody PassRequest passRequest) {
