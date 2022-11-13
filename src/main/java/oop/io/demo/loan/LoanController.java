@@ -51,8 +51,18 @@ public class LoanController {
         String userEmail = loanRequest.getUserEmail();
         Date loanDate = loanRequest.getLoanDate();
         String attractionName = loanRequest.getAttractionName();
+        int noOfPass = loanRequest.getNoOfPass();
+        if (noOfPass == 1){
         LoanService loanService= new LoanService(loanRepository,passRepository,userRepository);
         return loanService.addBooking(userEmail, loanDate, attractionName);
+        } else {
+            LoanService loanService1 = new LoanService(loanRepository,passRepository,userRepository);
+            LoanService loanService2 = new LoanService(loanRepository, passRepository, userRepository);
+            loanService1.addBooking(userEmail, loanDate, attractionName);
+            loanService2.addBooking(userEmail,loanDate, attractionName);
+            return "Two Passes Booking to " +loanDate+ " made for " +
+            attractionName+ " has been added.";
+        }
     }
 
     @GetMapping("/cancel")

@@ -72,11 +72,11 @@ public class LoanService {
 
         if (checkPass) {
             Loan loan = new Loan(userEmail, loanDate, attractionName);
-            loan.setLoanId();
             loan.setStatus(LOANSTATUS.CONFIRMED);
             String passNo = extractPassNo(attractionName);
             String contactNo = extractContactNo(userEmail);
             loan.setPassNo(passNo);
+            loan.setLoanId();
             loan.setContactNo(contactNo);
             loanRepository.save(loan);
             return "Booking to " +loanDate+ " made for " +

@@ -50,7 +50,7 @@ public class Loan {
     public void setLoanId() {
         SimpleDateFormat dateFor = new SimpleDateFormat("dd/MM/yyyy");
         String date=dateFor.format(this.loanDate);
-        this.loanId=date+this.userEmail;
+        this.loanId=date+this.userEmail+passNo;
     }
 
     public void setLoanDate(Date loanDate) {
