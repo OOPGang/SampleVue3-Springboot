@@ -31,64 +31,60 @@ public class LoanService {
         this.userRepository = UserRepository;
     }
 
-
-    public String extractPassNo(String attractionName){
+    public String extractPassNo(String attractionName) {
         String passNo = "";
         Optional<List<Pass>> passList = passRepository.findByAttractionName(attractionName);
-            if (passList.isPresent()){
-                for (Pass pass: passList.get()){
-                    if (pass.getPassStatus() == PASSSTATUS.INOFFICE){
-                        passNo = pass.getPassNo();
-                        break;
-                    }
+        if (passList.isPresent()) {
+            for (Pass pass : passList.get()) {
+                if (pass.getPassStatus() == PASSSTATUS.INOFFICE) {
+                    passNo = pass.getPassNo();
+                    break;
                 }
             }
-            return passNo;
+        }
+        return passNo;
     }
 
-    public String extractContactNo(String userEmail){
+    public String extractContactNo(String userEmail) {
         String contactNo = "";
         Optional<User> user = userRepository.findByEmail(userEmail);
-        if (user.isPresent()){
+        if (user.isPresent()) {
             contactNo = user.get().getContactNo();
         }
         return contactNo;
     }
 
-
-
-    // LoanRepository lr=new LoanRepository();
     // loan service should:
     // have method be able to change pass status (when pass is made available)
 
     // method to allow user to make booking
 
     // method to allow user to cancel booking
-
-    public String addBooking(String userEmail, Date loanDate, String attractionName) {
-    
+    public Date generateDueDate(Date date) {
         
+
+        return date;
+
+    }
+
+    public String addBooking(String userEmail,  Date loanDate, String attractionName) {
+
         Boolean checkPass = checkAvail(loanDate, attractionName);
 
         if (checkPass) {
-            Loan loan = new Loan(userEmail, loanDate, attractionName);
+            Loan loan = new Loan(userEmail,  loanDate, attractionName);
             loan.setLoanId();
+            loan.setDueDate(loanDate);
             loan.setStatus(LOANSTATUS.CONFIRMED);
             String passNo = extractPassNo(attractionName);
             String contactNo = extractContactNo(userEmail);
             loan.setPassNo(passNo);
             loan.setContactNo(contactNo);
             loanRepository.save(loan);
-            return "Booking to " +loanDate+ " made for " +
-            attractionName+ " has been added.";
+            return "Booking to " + loanDate + "and due on "+ loan.getDueDate()+" made for " +
+                    attractionName + " has been added.";
         }
 
-        // if (checkAvail(loanDate,attractionName)){
-        // repository.save(loan);
-        // return "Booking to " + loan.getAttractionName() + " made by " +
-        // loan.getUserEmail() + " has been added.";
-        // }
-        // getUserInfo(loanDate,attractionName);
         return "Booking unsuccessful, please try again.";
     }
 
@@ -98,18 +94,15 @@ public class LoanService {
         return ResponseEntity.ok("Loan cancelled: " + loanStatus.toString());
     }
 
-
-
-
-    public ResponseEntity changeLoanStatus(String loanId, LOANSTATUS loanstatus){
+    public ResponseEntity changeLoanStatus(String loanId, LOANSTATUS loanstatus) {
         Optional<Loan> l = loanRepository.findById(loanId);
-        if(!l.isPresent()) {
+        if (!l.isPresent()) {
             return ResponseEntity.badRequest().body("Loan does not exist");
         }
         Loan loan = l.get();
         loan.setStatus(loanstatus);
         loanRepository.save(loan);
-        return ResponseEntity.ok("Changed status of loan successfully to: " +loanstatus.toString());
+        return ResponseEntity.ok("Changed status of loan successfully to: " + loanstatus.toString());
     }
 
     public String deleteBooking(String loanId, Date loanDate) {
@@ -131,7 +124,7 @@ public class LoanService {
         return "Loan has been collected by the user";
 
     }
-    
+
     public String checkLoan(String userEmail) {
         ArrayList<Loan> loanList = loanRepository.findAllByUserEmail(userEmail);
         Calendar cal = Calendar.getInstance();
@@ -165,8 +158,6 @@ public class LoanService {
         return true;
 
     }
-
-
 
     // Method for getting userinfo of a loan
     public String getUserInfo(Date loanDate, String attractionName) {
@@ -202,11 +193,6 @@ public class LoanService {
         return ResponseEntity.ok("Card changed to lost: " + loanStatus.toString());
     }
 
-
-
-    
-    
-
     // Method to cancel all loans
     public String cancelAllLoans(String passNo, Date date) {
         ArrayList<Loan> loans = loanRepository.findAllByPassNo(passNo);
@@ -222,4 +208,4 @@ public class LoanService {
         return "All changes have been made";
     }
 
-} 
+}

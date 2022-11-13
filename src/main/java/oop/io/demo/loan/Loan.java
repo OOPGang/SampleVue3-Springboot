@@ -15,6 +15,8 @@ import org.springframework.data.annotation.Id;
 public class Loan {
 
     private Date loanDate;
+    @Column(nullable = false)
+    private Date dueDate;
     @CreatedDate
     private Date bookingMadeDate;
     private String attractionName;
@@ -38,7 +40,7 @@ public class Loan {
     public Loan() {
     }
 
-    public Loan(String userEmail, Date loanDate, String attractionName) {
+    public Loan(String userEmail,Date loanDate, String attractionName) {
         this.loanId = userEmail;
         this.loanDate = loanDate;// the date where the user is making the booking
         this.attractionName = attractionName;
@@ -55,6 +57,15 @@ public class Loan {
 
     public void setLoanDate(Date loanDate) {
         this.loanDate = loanDate;
+    }
+
+
+    public Date getDueDate(){
+        return dueDate;
+    }
+    public void setDueDate(Date dueDate){
+        Date tomorrow = new Date(dueDate.getTime() + (1000 * 60 * 60 * 24));
+        this.dueDate=tomorrow;
     }
 
     public void setBookingMadeDate(Date bookingMadeDate) {

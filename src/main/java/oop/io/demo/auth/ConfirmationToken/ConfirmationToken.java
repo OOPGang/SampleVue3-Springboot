@@ -70,7 +70,7 @@ public class ConfirmationToken {
     public void setExpiresAt(LocalDateTime expiresAt) {
         this.expiresAt = expiresAt;
     }
-
+    
     public LocalDateTime getConfirmedAt() {
         return confirmedAt;
     }

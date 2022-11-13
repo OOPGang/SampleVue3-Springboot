@@ -6,10 +6,13 @@ public class LoanRequest {
     private String attractionName;
     private Date loanDate;
 
+    
+
     public LoanRequest(String userEmail, String attractionName, Date loanDate){
         this.userEmail = userEmail;
         this.attractionName = attractionName;
         this.loanDate = loanDate;
+     
     }
 
     public String getUserEmail(){
@@ -25,5 +28,9 @@ public class LoanRequest {
     public Date getLoanDate(){
         return this.loanDate;
     }
+
+
+
+
     
 }

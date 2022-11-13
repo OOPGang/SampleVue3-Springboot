@@ -6,6 +6,7 @@ public enum LOANSTATUS {
     ACTIVE,
     COMPLETE,
     OVERDUE,
-    LOST
+    LOST,
+    REMINDER
 
 }

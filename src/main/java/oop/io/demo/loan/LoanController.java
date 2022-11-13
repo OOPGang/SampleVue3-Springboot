@@ -48,8 +48,10 @@ public class LoanController {
     JwtUtils jwtUtils;
     @PostMapping("/book")
     public String addBooking(@RequestBody LoanRequest loanRequest){
+
         String userEmail = loanRequest.getUserEmail();
         Date loanDate = loanRequest.getLoanDate();
+     
         String attractionName = loanRequest.getAttractionName();
         LoanService loanService= new LoanService(loanRepository,passRepository,userRepository);
         return loanService.addBooking(userEmail, loanDate, attractionName);
