@@ -85,18 +85,21 @@ public class PasswordController {
     }
 
     @GetMapping("/change")
-    public ResponseEntity<?> changePassword(@RequestHeader String email, @RequestBody PasswordRequest passwordRequest) throws UserPrincipalNotFoundException{
-        User user = userRepository.findByEmail(email).get();
-        if(user==null) throw new UserPrincipalNotFoundException(email);
-        String oldPassword = passwordRequest.getOldPassword();
+    public ResponseEntity<?> changePassword(@RequestHeader String email, @RequestBody PasswordRequest passwordRequest){
+        try {
+            User user = userRepository.findByEmail(email).get();
+            String oldPassword = passwordRequest.getOldPassword();
 
-        if(!encoder.matches(oldPassword, user.getPassword())) {
-            return ResponseEntity.badRequest().body("Old password is incorrect!");
-        } else {
-        //Password validation to do on frontend
-        user.setPassword(encoder.encode(passwordRequest.getPassword()));
-        userRepository.save(user);
-        return ResponseEntity.ok("Password changed successfully!");
+            if(!encoder.matches(oldPassword, user.getPassword())) {
+                return ResponseEntity.badRequest().body("Old password is incorrect!");
+            } else {
+            //Password validation to do on frontend
+            user.setPassword(encoder.encode(passwordRequest.getPassword()));
+            userRepository.save(user);
+            return ResponseEntity.ok("Password changed successfully!");
+            }
+        } catch(Exception e) {
+            return ResponseEntity.badRequest().body("User not found");
         }
     }
 }

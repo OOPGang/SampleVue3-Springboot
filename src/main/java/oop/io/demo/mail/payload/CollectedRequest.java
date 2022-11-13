@@ -2,7 +2,7 @@ package oop.io.demo.mail.payload;
 
 import javax.validation.constraints.NotBlank;
 
-public class ConfirmRequest {
+public class CollectedRequest {
     @NotBlank
 	private String email;
 

@@ -25,46 +25,30 @@ public class PassController {
         this.attractionRepository = attractionRepository; 
     }
 
+    //GET pass by id
     @GetMapping("/{passid}")
     public ResponseEntity<Optional<Pass>> getPassDetails(@PathVariable("passid") String passId) {
         return ResponseEntity.ok(repository.findById(passId));
     }
   
+    //Get passes by attraction
     @GetMapping("/passes/{attraction}")
     public ResponseEntity getAvailablePassesByAttraction(@PathVariable("attraction") String attraction) {
         List<Pass> passes = new PassService(repository, attractionRepository).getAvailablePassesByAttraction(attraction);
         return ResponseEntity.ok(passes);
     }
     
+    //Get all passes
     @GetMapping("/passes")
     public ResponseEntity<List<Pass>> getAllPasses() {
         return ResponseEntity.ok(repository.findAll());
     }
 
+    //Get passes by pass status
     @GetMapping("/passes/status")
     public ResponseEntity<List<Pass>> getPassesByPassStatus(@RequestParam(value="status") String passStatus) {
         PASSSTATUS status = PASSSTATUS.valueOf(passStatus.toUpperCase());
         return ResponseEntity.ok(repository.findByPassStatus(status).get());
     }
     
-    //for creating new passes for an existing attraction
-    @PostMapping("/{attractionname}/new")
-    public ResponseEntity createPasses(@PathVariable("attractionname") String attractionName, @RequestBody PassRequest passRequest) {
-        PassService passService = new PassService(repository, attractionRepository);
-        ResponseEntity responseEntity = passService.createPass(passRequest);
-        return responseEntity;
-    }
-    
-    @GetMapping("/{passid}/deactivate")
-    public ResponseEntity deactivatePass(@PathVariable("passid") String passId) {
-        ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.DEACTIVATED);
-        return responseEntity;
-    }
-
-    @GetMapping("/{passid}/activate")
-    public ResponseEntity activatePass(@PathVariable("passid") String passId) {
-        ResponseEntity responseEntity = new PassService(repository, attractionRepository).changePassStatus(passId, PASSSTATUS.INOFFICE);
-        return responseEntity;
-    }
-
 }

@@ -1,5 +1,8 @@
 HELP.md
 target/
+src/main/resources/attachments/
+src/main/resources/attractionicons/
+src/main/resources/templates/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/

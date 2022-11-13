@@ -8,6 +8,7 @@
 		<version>2.7.3</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
+	
 	<groupId>gideon.io</groupId>
 	<artifactId>demo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -20,6 +21,7 @@
 		<spring.version>5.2.0.RELEASE</spring.version>
 		<email.version>1.16.18</email.version>
 	</properties>
+
 	<dependencies>
 
 		<dependency>
@@ -113,6 +115,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-mail</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.awaitility</groupId>
+			<artifactId>awaitility</artifactId>
+			<version>3.1.2</version>
+			<scope>test</scope>
+		  </dependency>
 	</dependencies>
 
 	<build>

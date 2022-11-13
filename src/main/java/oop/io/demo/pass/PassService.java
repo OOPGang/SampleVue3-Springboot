@@ -61,12 +61,4 @@ public class PassService {
         return passesByStatus;
     }
 
-    // public List<Pass> getPassesByAttractionAndType(String attraction, PASSTYPE passtype){
-
-    // }
-
-    // public List<Pass> getAvailablePassesByAttractionAndType(String attraction, PASSTYPE passtype) {
-
-    // }
-
 }

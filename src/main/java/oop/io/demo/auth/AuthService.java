@@ -12,6 +12,7 @@ import oop.io.demo.auth.payload.request.PasswordRequest;
 import oop.io.demo.auth.payload.request.SignupRequest;
 import oop.io.demo.auth.payload.request.VerificationRequest;
 import oop.io.demo.auth.payload.response.MessageResponse;
+import oop.io.demo.exception.EmailFailToSendException;
 import oop.io.demo.exception.PasswordsDoNotMatchException;
 import oop.io.demo.mail.Email;
 import oop.io.demo.mail.EmailSender;
@@ -38,7 +39,7 @@ public class AuthService {
         this.confirmationTokenRepository = confirmationTokenRepository;
     }
 
-    public ResponseEntity<?> signUpOneUser(SignupRequest signUpRequest) throws Exception {
+    public ResponseEntity<?> signUpOneUser(SignupRequest signUpRequest) throws EmailFailToSendException {
         // Create new user's account
         User user = new User(
                             signUpRequest.getName(),
@@ -68,7 +69,7 @@ public class AuthService {
         return token;
     }
 
-    public ResponseEntity<?> sendConfirmationTokenEmail(User user) throws Exception {
+    public ResponseEntity<?> sendConfirmationTokenEmail(User user) throws EmailFailToSendException {
         String token = generateConfirmationToken(user.getEmail());
         //send email
         Email mail = new Email();
@@ -77,8 +78,12 @@ public class AuthService {
         //TODO: replace with email template; could create email builder service to integrate link and email
         mail.setContent("Please use this token to complete registration process: " + token);
         emailService= new EmailService();
-        emailService.sendEmail(mail);
-        return ResponseEntity.ok(new MessageResponse("Please check email to complete registration"));
+        try {
+            emailService.sendEmail(mail);
+            return ResponseEntity.ok(new MessageResponse("Please check email to complete registration"));
+        } catch (Exception e) {
+            throw new EmailFailToSendException("Failed to send confirmation token email");
+        }
     }
 
     public ResponseEntity<?> sendForgotPasswordEmail(String email) throws PasswordsDoNotMatchException{

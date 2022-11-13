@@ -1,6 +1,6 @@
 <template>
     <div>
-      <b-modal ref="my-modal" header-bg-variant="success" 
+      <b-modal ref="pass-creation-confirmation-modal" header-bg-variant="success" 
         hide-footer
         header-text-variant="light"
         footerTextVariant= "dark"
@@ -32,12 +32,12 @@
         },
       methods: {
         showModal(no_passes, pass_name) {
-          this.$refs['my-modal'].show()
+          this.$refs['pass-creation-confirmation-modal'].show()
           this.pass_name= pass_name
           this.no_passes= no_passes
         },
         hideModal() {
-          this.$refs['my-modal'].hide()
+          this.$refs['pass-creation-confirmation-modal'].hide()
         },
         
       }

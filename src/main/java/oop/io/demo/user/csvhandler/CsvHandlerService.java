@@ -1,4 +1,4 @@
-package oop.io.demo.csvhandler;
+package oop.io.demo.user.csvhandler;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -37,10 +37,10 @@ public class CsvHandlerService {
 				if (repository.existsByEmail(request.getEmail())) {
 					messages.add(request.getEmail()+" already exists");
 					continue;
-				} else if(!(request.getEmail().matches("[a-z0-9]+@sportsschool.edu.sg")) && !(request.getEmail().matches("[a-z0-9]+@nysi.org.sg"))) {
-					messages.add(request.getEmail()+" isn't a Singapore Sports School email.");
-					continue;
-				}
+				} //else if(!(request.getEmail().matches("[a-z0-9]+@sportsschool.edu.sg")) && !(request.getEmail().matches("[a-z0-9]+@nysi.org.sg"))) {
+				// 	messages.add(request.getEmail()+" isn't a Singapore Sports School email.");
+				// 	continue;
+				// }
 				authService.signUpOneUser(request);
 				successfulSignUps+=1;
 			}

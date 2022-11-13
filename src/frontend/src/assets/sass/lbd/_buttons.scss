@@ -3,12 +3,14 @@
     background-color: $transparent-bg;
     font-weight: $font-weight-normal;
 
-    @include opacity(.8);
+    @include opacity(1);
     padding: $padding-base-vertical $padding-base-horizontal;
 
     @include btn-styles($default-color, $default-states-color);
 
-    &:hover,
+    &:hover{
+        @include opacity(1.2);
+    }
     &:focus{
         @include opacity(1);
         outline: 0 !important;

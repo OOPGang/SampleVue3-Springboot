@@ -1,304 +1,169 @@
 <template>
-  <div class="bg-color">
-    <form class="needs-validation" novalidate>
-      <div class="row">
-        <div class="col-md-6 p-0">
-          <div class="login-card">
-            <div class="login-box">
-              <div class="login-snip">
-                <input id="tab-1" type="radio" name="tab" class="sign-in" checked><label for="tab-1"
-                  class="tab">Login</label>
-                <input id="tab-2" type="radio" name="tab" class="sign-up"><label for="tab-2" class="tab">Sign Up</label>
-                <div class="login-space needs-validation">
-                  <div class="login">
-                    <div class="group">
-                      <label for="email" class="label">Email</label>
-                      <input id="email" type="email" class="input" placeholder="Enter your email" v-model="login.email">
-                      <div id="valid-email" class="validate"></div>
-                    </div>
-                    <div class="group">
-                      <label for="pass" class="label">Password</label>
-                      <input id="pass" type="password" class="input" data-type="password" placeholder="Enter your password" v-model="login.password">
-                      <div id="valid-password" class="validate"></div>
-                    </div>
-                    <div class="group">
-                      <input id="check" type="checkbox" class="check" v-model="checked">
-                      <label for="check"><span class="icon"></span> Keep me signed in</label>
-                    </div>
-                    <div class="group">
-                      <input type="submit" class="button" value="Sign In" @click="submit">
-                    </div>
-                    <div class="hr"></div>
-                    <div class="foot">
-                      <label for="tab-1">Forgot Password?</label>
-                    </div>
-                  </div>
-                  <div class="sign-up-form">
-                    <div class="group">
-                      <label for="user" class="label">Name</label>
-                      <input id="user" type="text" class="input" placeholder="Enter your name" v-model="register.name">
-                      <div id="valid-name" class="validate"></div>
-                    </div>
-                    <div class="group">
-                      <label for="email" class="label">Email</label>
-                      <input id="reg-email" type="email" class="input" placeholder="Enter your email" v-model="register.regemail">
-                      <div id="valid-reg-email" class="validate"></div>
-                    </div>
-                    <div class="group">
-                      <input type="submit" class="button" value="Get Activation Email" @click="register">
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </form>
+  <div>
+    <ul class="nav nav-pills nav-justified mb-3" id="ex1" role="tablist">
+      <li class="nav-item" role="presentation">
+        <a class="nav-link active" id="tab-login" data-mdb-toggle="pill" href="#" role="tab" aria-controls="pills-login"
+          aria-selected="true">Login</a>
+      </li>
+      <li class="nav-item" role="presentation">
+        <a class="nav-link" id="tab-register" data-mdb-toggle="pill" href="" role="tab" aria-controls="pills-register"
+          aria-selected="false" @click="register()">Register</a>
+      </li>
+    </ul>
+
+    <b-form @submit.stop.prevent="onSubmit">
+      <b-form-group id="example-input-group-1" label="Email" label-for="example-input-1">
+        <b-form-input id="example-input-1" name="example-input-1" v-model="$v.form.email.$model"
+          :state="validateState('email')" aria-describedby="input-1-live-feedback"></b-form-input>
+
+        <b-form-invalid-feedback id="input-1-live-feedback">This is a required field and must end with @nysi.org.sg or
+          @sportsschool.edu.sg</b-form-invalid-feedback>
+      </b-form-group>
+
+      <div> </div>
+
+      <b-form-group id="example-input-group-3" label="Password" label-for="example-input-3">
+        <b-form-input id="example-input-3" name="example-input-3" v-model="$v.form.password.$model"
+          :state="validateState('password')" aria-describedby="input-3-live-feedback"></b-form-input>
+
+        <b-form-invalid-feedback id="input-3-live-feedback">This is a required field and the minimum length is 6.
+        </b-form-invalid-feedback>
+      </b-form-group>
+
+      <b-form-group id="example-input-group-4" label-for="example-input-4">
+        <b-form-checkbox id="checkbox-1" v-model="status" name="checkbox-1" value="remember_me"
+          unchecked-value="forget_me">
+          Remember me
+        </b-form-checkbox>
+      </b-form-group>
+
+      <!-- <div>State: <strong>{{ status }}</strong></div> -->
+
+      <b-button type="submit" variant="primary">Login</b-button>
+
+      <br>
+
+      Forget password?
+      <b-button class="ml-2" @click="forgetPassword()">Reset Password</b-button>
+
+    </b-form>
   </div>
 </template>
-  
+
+<style>
+body {
+  padding: 1rem;
+}
+</style>
+
 <script>
+import axios from "axios";
+import { validationMixin } from "vuelidate";
+import { required, minLength, helpers } from "vuelidate/lib/validators";
+const email_validation = helpers.regex('email', /(?:[a-z0-9]+@nysi.org.sg|[a-z0-9]+@sportsschool.edu.sg)/);
 
 export default {
+  mixins: [validationMixin],
   data() {
     return {
-      login: {
+      form: {
         email: '',
         password: '',
-        checked: []
       },
-      register: {
-        name: '',
-        regemail: ''
+      status: 'forget_me',
+      api: {
+        sign_in: 'http://localhost:8000/auth/sign_in',
+        reset: 'http://localhost:8000/auth/reset',
+      }
+    };
+  },
+  validations: {
+    form: {
+      email: {
+        required,
+        email_validation
+      },
+      password: {
+        required,
+        minLength: minLength(6)
       }
     }
   },
   methods: {
-    submit(event) {
-      event.preventDefault()
-      console.log(this.login)
-      if(this.email == "") {
-        document.getElementById('valid-email').innerHTML = 'Please enter a valid email.'
-      }
-      if(this.password == "") {
-        document.getElementById('valid-password').innerHTML = 'Please enter a valid password.'
-        return
-      }
+    validateState(email) {
+      const { $dirty, $error } = this.$v.form[email];
+      return $dirty ? !$error : null;
     },
-    register(event) {
-      event.preventDefault()
-      console.log(this.register)
-      if(this.name == "") {
-        document.getElementById('valid-name').innerHTML = 'Please enter a name.'
+    validateState(password) {
+      const { $dirty, $error } = this.$v.form[password];
+      return $dirty ? !$error : null;
+    },
+    // resetForm() {
+    //   this.form = {
+    //     email: null,
+    //     food: null
+    //   };
+
+    //   this.$nextTick(() => {
+    //     this.$v.$reset();
+    //   });
+    // },
+
+    onSubmit() {
+      this.$v.form.$touch();
+      if (this.$v.form.$anyError) {
+        return;
       }
-      if(this.regemail == "") {
-        document.getElementById('valid-reg-email').innerHTML = 'Please enter an email.'
-        return
-      }
-      if(this.name != "" && this.regemail != "") {
-        this.$router.push('/Authentication')
-      }
+
+      // alert("Form submitted!");
+      // console.log(this.form.email);
+      // console.log(this.form.password);
+      // console.log(this.status);
+      return axios
+        .post(this.api.sign_in, {
+          "email": this.form.email,
+          "password": this.form.password,
+          "status": this.status
+        })
+        .then(response => {
+          console.log(response.data);
+          this.$router.push('/booking');
+        })
+        .catch(error => {
+          console.log(error);
+        });
+    },
+
+    register() {
+      this.$router.push('/register');
+    },
+
+    forgetPassword() {
+      return axios
+        .post(this.api.reset, {
+          "email": this.form.email
+        })
+        .then(response => {
+          console.log(response.data);
+          this.$router.push('/reset');
+        })
+        .catch(error => {
+          console.log(error);
+        });
     }
-  }
-}
+  },
+  // mounted() {
+  //   axios
+  //     .get("http://localhost:8080/auth/signup")
+  //     .then((response) => {
+  //       console.log(response.data);
+  //       var login_details = response.data;
+  //       this.login_details = login_details;
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);
+  //     });
+  // }
+
+};
 </script>
-  
-<style>
-.bg-color {
-  background-color: #d7d7d7;
-  height: 100%;
-  width: 100%;
-  min-height: 100vh;
-  font: 600 16px/18px 'Open Sans', sans-serif;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-.login-box {
-  width: 100%;
-  margin: auto;
-  max-width: 525px;
-  min-height: 670px;
-  position: relative;
-  /* background: url('../assets/images/river_safari.jpg') no-repeat center; */
-  box-shadow: 0 12px 15px 0 rgba(0, 0, 0, .24), 0 17px 50px 0 rgba(0, 0, 0, .19);
-}
-
-.login-snip {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  padding: 90px 70px 50px 70px;
-  background: rgba(0, 77, 77, .9);
-}
-
-.login-snip .login,
-.login-snip .sign-up-form {
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  position: absolute;
-  transform: rotateY(180deg);
-  backface-visibility: hidden;
-  transition: all .4s linear;
-}
-
-.login-snip .sign-in,
-.login-snip .sign-up,
-.login-space .group .check {
-  display: none;
-}
-
-.login-snip .tab,
-.login-space .group .label,
-.login-space .group .button {
-  text-transform: uppercase;
-}
-
-.login-snip .tab {
-  font-size: 22px;
-  margin-right: 15px;
-  padding-bottom: 5px;
-  margin: 0 15px 30px 0;
-  display: inline-block;
-  border-bottom: 2px solid transparent;
-}
-
-.login-snip .sign-in:checked+.tab,
-.login-snip .sign-up:checked+.tab {
-  color: #fff;
-  border-color: #eeea11;
-}
-
-.login-space {
-  min-height: 345px;
-  position: relative;
-  perspective: 1000px;
-  transform-style: preserve-3d;
-}
-
-.login-space .group {
-  margin-bottom: 15px;
-}
-
-.login-space .group .label,
-.login-space .group .input,
-.login-space .group .button {
-  width: 100%;
-  color: #fff;
-  display: block;
-}
-
-.login-space .group .input,
-.login-space .group .button {
-  border: none;
-  padding: 15px 20px;
-  border-radius: 25px;
-  background: rgba(255, 255, 255, .1);
-}
-
-.login-space .group input[data-type="password"] {
-  text-security: circle;
-  -webkit-text-security: circle;
-}
-
-.login-space .group .label {
-  color: rgb(209, 209, 209);
-  font-size: 12px;
-}
-
-.login-space .group .button {
-  background: #e0b50c;
-}
-
-.login-space .group label .icon {
-  width: 15px;
-  height: 15px;
-  border-radius: 2px;
-  position: relative;
-  display: inline-block;
-  background: rgba(255, 255, 255, 0.603);
-}
-
-.login-space .group label .icon:before,
-.login-space .group label .icon:after {
-  content: '';
-  width: 10px;
-  height: 2px;
-  background: #fff;
-  position: absolute;
-  transition: all .2s ease-in-out 0s;
-}
-
-.login-space .group label .icon:before {
-  left: 3px;
-  width: 5px;
-  bottom: 6px;
-  transform: scale(0) rotate(0);
-}
-
-.login-space .group label .icon:after {
-  top: 6px;
-  right: 0;
-  transform: scale(0) rotate(0);
-}
-
-.login-space .group .check+label {
-  color: rgb(206, 206, 206);
-}
-
-.login-space .group .check:checked+label {
-  color: #fff;
-}
-
-.login-space .group .check:checked+label .icon {
-  background: #1161ee;
-}
-
-.login-space .group .check:checked+label .icon:before {
-  transform: scale(1) rotate(45deg);
-}
-
-.login-space .group .check:checked+label .icon:after {
-  transform: scale(1) rotate(-45deg);
-}
-
-.login-snip .sign-in:checked+.tab+.sign-up+.tab+.login-space .login {
-  transform: rotate(0);
-}
-
-.login-snip .sign-up:checked+.tab+.login-space .sign-up-form {
-  transform: rotate(0);
-}
-
-*,:after,:before{box-sizing:border-box}
-.clearfix:after,.clearfix:before{content:'';display:table}
-.clearfix:after{clear:both;display:block}
-a{color:inherit;text-decoration:none}
-
-.hr{
-	height:2px;
-	margin:60px 0 50px 0;
-	background:rgba(255,255,255,.2);
-}
-.foot{
-	text-align:center;
-}
-.login-card{
-	width: 500px;
-}
-
-.validate{
-  color: rgb(255, 68, 68);
-  font-weight: normal;
-  font-style: italic;
-  padding-top: 5px;
-}
-
-::placeholder{
-color: #b3b3b3;
-} 
-</style>

@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.freemarker.FreeMarkerTemplateUtils;
 
@@ -16,6 +17,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.*;
 import javax.mail.internet.InternetAddress;
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 import java.io.IOException;
 
 @Service
@@ -26,6 +28,7 @@ public class EmailService {
     @Autowired
     Configuration fmConfiguration;
 
+    //Confirmation Token Email Session
     public Session session(){
         final String username = "oopg2t4@outlook.com";
         final String password = "g2t4OOP!";
@@ -42,16 +45,14 @@ public class EmailService {
                     }
                 });
     }
-
+    //Confirmation Token Email
     public void sendEmail(Email mail) {
         try {
-            
             Message message = new MimeMessage(session());
             message.setFrom(new InternetAddress("oopg2t4@outlook.com"));
             message.setRecipients(
                     Message.RecipientType.TO,
                     InternetAddress.parse(mail.getTo())
-                    //InternetAddress.parse("oopg2t4@outlook.com")
             );
             message.setSubject(mail.getSubject());
             message.setText(mail.getContent());
@@ -64,6 +65,79 @@ public class EmailService {
         }
     }
 
+    // Collected Email/To Collect Email/Overdue Email
+    public void sendSimpleEmail(String email, String subject, String template) throws Exception {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+
+            mimeMessageHelper.setTo(email);
+            mimeMessageHelper.setFrom("singaporesportsschooltest@outlook.com");
+            mimeMessageHelper.setSubject(subject);
+    
+            fmConfiguration.setClassForTemplateLoading(this.getClass(), "/templates");
+            Template t = fmConfiguration.getTemplate(template);
+
+            String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, null);
+            mimeMessageHelper.setText(text, true);
+
+            javaMailSender.send(mimeMessageHelper.getMimeMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Template email with modelling --> "Booking Email without Attachment"
+    public void sendEmailTemplate(Email mail,  String template, String templatePath) throws Exception {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+
+            fmConfiguration.setClassForTemplateLoading(this.getClass(), templatePath);
+            Template t = fmConfiguration.getTemplate(template);
+
+            String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, mail.getModel());
+
+            mimeMessageHelper.setSubject(mail.getSubject());
+            mimeMessageHelper.setFrom(mail.getFrom());
+            mimeMessageHelper.setTo(mail.getTo());
+            mimeMessageHelper.setText(text, true);
+
+            javaMailSender.send(mimeMessageHelper.getMimeMessage());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Template email with modelling and attachment --> "Booking Email with Attachment"
+    public void sendEmailWithAttachment(Email mail, String template, String templatePath, String attachment, String attachmentPath) throws MessagingException, IOException {
+        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
+
+            fmConfiguration.setClassForTemplateLoading(this.getClass(), templatePath);
+            Template t = fmConfiguration.getTemplate(template);
+
+            String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, mail.getModel());
+
+            mimeMessageHelper.setSubject(mail.getSubject());
+            mimeMessageHelper.setFrom(mail.getFrom());
+            mimeMessageHelper.setTo(mail.getTo());
+            mimeMessageHelper.setText(text, true);
+
+            mimeMessageHelper.addAttachment(attachment, new ClassPathResource(attachmentPath));
+
+            javaMailSender.send(mimeMessageHelper.getMimeMessage());
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+}
+
+    /* 
     public void sendTemplateEmail(Email mail) {
         try {
             Message message = new MimeMessage(session());
@@ -85,7 +159,7 @@ public class EmailService {
     }
 
 
-    // Simple template email with no modelling
+    // Simple template email with no modelling --> "Collected Email"
     public void sendSimpleEmailTemplate(Email mail, String template) throws Exception {
         MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
@@ -107,52 +181,4 @@ public class EmailService {
             e.printStackTrace();
         }
     }
-
-    // Template email with modelling
-    public void sendEmailTemplate(Email mail,  String template) throws Exception {
-        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        try {
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-
-            fmConfiguration.setClassForTemplateLoading(this.getClass(), "/templates");
-            Template t = fmConfiguration.getTemplate(template);
-
-            String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, mail.getModel());
-
-            mimeMessageHelper.setSubject(mail.getSubject());
-            mimeMessageHelper.setFrom(mail.getFrom());
-            mimeMessageHelper.setTo(mail.getTo());
-            mimeMessageHelper.setText(text, true);
-
-            javaMailSender.send(mimeMessageHelper.getMimeMessage());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void sendEmailWithAttachment(Email mail, String template, String attachment) throws MessagingException, IOException {
-        MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        try {
-            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage, true);
-
-            fmConfiguration.setClassForTemplateLoading(this.getClass(), "/templates");
-            Template t = fmConfiguration.getTemplate(template);
-
-            String text = FreeMarkerTemplateUtils.processTemplateIntoString(t, mail.getModel());
-
-            mimeMessageHelper.setSubject(mail.getSubject());
-            mimeMessageHelper.setFrom(mail.getFrom());
-            mimeMessageHelper.setTo(mail.getTo());
-            mimeMessageHelper.setText(text, true);
-
-            String path = "attachments/" + attachment;
-            mimeMessageHelper.addAttachment(attachment, new ClassPathResource(path));
-
-            javaMailSender.send(mimeMessageHelper.getMimeMessage());
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-}
+     */

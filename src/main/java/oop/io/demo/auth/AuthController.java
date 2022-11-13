@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import oop.io.demo.auth.confirmationToken.ConfirmationToken;
@@ -28,6 +27,7 @@ import oop.io.demo.auth.payload.response.JwtResponse;
 import oop.io.demo.auth.payload.response.MessageResponse;
 import oop.io.demo.auth.security.jwt.JwtUtils;
 import oop.io.demo.auth.security.services.UserDetailImplementation;
+import oop.io.demo.exception.EmailFailToSendException;
 import oop.io.demo.user.User;
 import oop.io.demo.user.UserRepository;
 import oop.io.demo.user.UserService;
@@ -84,19 +84,27 @@ public class AuthController {
 
         //this is the first step to signing up (just using name and email)
         @PostMapping("/signup")
-        public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) throws Exception {
+        public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest){
             AuthService authService = new AuthService(userRepository, confirmationTokenRepository);
-            if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-                User u = userRepository.findByEmail(signUpRequest.getEmail()).get();
-                if(!u.isVerified()){
-                    authService.sendConfirmationTokenEmail(u);
-                    return ResponseEntity.badRequest().body(new MessageResponse("Error: User with this email is already registered. Please check email for verification link."));
-                }
-                return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use! Please log in instead."));
-            } /* else if(!(signUpRequest.getEmail().matches("[a-z0-9]+@sportsschool.edu.sg")) && !(signUpRequest.getEmail().matches("[a-z0-9]+@nysi.org.sg"))){
-                return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is not a slay email!"));
-            } */
-            return authService.signUpOneUser(signUpRequest);
+            try {
+                if (userRepository.existsByEmail(signUpRequest.getEmail())) {
+                    User u = userRepository.findByEmail(signUpRequest.getEmail()).get();
+                    if(!u.isVerified()){
+                        authService.sendConfirmationTokenEmail(u);
+                        return ResponseEntity.badRequest().body(new MessageResponse("Error: User with this email is already registered. Please check email for verification link."));
+                    }
+                    return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is already in use! Please log in instead."));
+                } /* else if(!(signUpRequest.getEmail().matches("[a-z0-9]+@sportsschool.edu.sg")) && !(signUpRequest.getEmail().matches("[a-z0-9]+@nysi.org.sg"))){
+                    return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is not a slay email!"));
+                } */
+                return authService.signUpOneUser(signUpRequest);
+            } catch(EmailFailToSendException e) {
+                return ResponseEntity.badRequest().body(e.getMessage());
+            }
+            catch(Exception e) {
+                return ResponseEntity.badRequest().body("Unable to sign up user.");
+            }
+    
         }
 
         @GetMapping("/confirm")
@@ -124,7 +132,7 @@ public class AuthController {
 
             //set isVerified to equal true
             userService = new UserService(userRepository);
-            userService.enableUser(confirmationToken.getUser().getEmail());
+            userService.enableDisableUser(confirmationToken.getUser().getEmail(), "Enable");
 
             return ResponseEntity.ok("Confirmed");
         }
