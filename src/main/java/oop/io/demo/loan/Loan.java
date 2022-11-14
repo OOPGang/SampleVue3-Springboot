@@ -61,7 +61,7 @@ public class Loan {
 
 
     public Date getDueDate(){
-        return dueDate;
+        return this.dueDate;
     }
     public void setDueDate(Date dueDate){
         Date tomorrow = new Date(dueDate.getTime() + (1000 * 60 * 60 * 24));
