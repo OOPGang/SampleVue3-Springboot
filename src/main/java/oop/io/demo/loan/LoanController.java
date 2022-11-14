@@ -139,7 +139,7 @@ public class LoanController {
             }
             
             loanRepository.saveAll(savedLoans);
-            System.out.println(savedLoans.toString());
+          
             return ResponseEntity.ok("Overdue sent!");
         } catch (Exception e){
             return ResponseEntity.badRequest().body("Overdue not sent.");
@@ -167,7 +167,7 @@ public class LoanController {
                 cal.setTime(loan.getDueDate());
                 cal.add(Calendar.DAY_OF_YEAR,-1);
                 Date oneDayBefore= cal.getTime();
-                System.out.println(oneDayBefore);
+                
               
                 if(isSameDay(currentDate, oneDayBefore)){
                     loan.setStatus(LOANSTATUS.OVERDUE);
