@@ -157,8 +157,8 @@ public class LoanController {
         }
     }
 
-    @GetMapping("/{userEmail}")
-    public ResponseEntity getLoansByUserEmail(@PathVariable("userEmail") String userEmail){
+    @GetMapping("/allbookingsbyuser")
+    public ResponseEntity getLoansByUserEmail(@RequestParam("userEmail") String userEmail){
         List<Loan> loans = loanRepository.findAllByUserEmail(userEmail);
         if(!loans.isEmpty()) {
             return ResponseEntity.ok(loans);
