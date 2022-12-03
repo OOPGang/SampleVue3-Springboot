@@ -36,9 +36,8 @@ import oop.io.demo.auth.confirmationToken.ConfirmationTokenRepository;
 import oop.io.demo.auth.confirmationToken.ConfirmationTokenService;
 import oop.io.demo.auth.payload.request.LoginRequest;
 import oop.io.demo.auth.payload.request.SignupRequest;
-import oop.io.demo.auth.payload.response.JwtResponse;
 import oop.io.demo.auth.payload.response.MessageResponse;
-import oop.io.demo.auth.security.cookie.CookieAuthenticationFilter;
+import oop.io.demo.auth.security.jwt.AuthTokenFilter;
 import oop.io.demo.auth.security.jwt.JwtUtils;
 import oop.io.demo.auth.security.services.UserDetailImplementation;
 import oop.io.demo.exception.EmailFailToSendException;
@@ -93,7 +92,7 @@ public class AuthController {
         //                             userDetails.getName(),
         //                             userDetails.getAuthority()));
 
-        Cookie authCookie = new Cookie(CookieAuthenticationFilter.COOKIE_NAME, jwtUtils.generateJwtToken(authentication));
+        Cookie authCookie = new Cookie(AuthTokenFilter.COOKIE_NAME, jwtUtils.generateJwtToken(authentication));
         authCookie.setHttpOnly(true);
         authCookie.setSecure(true);
         authCookie.setMaxAge((int) Duration.of(1, ChronoUnit.DAYS).toSeconds());
