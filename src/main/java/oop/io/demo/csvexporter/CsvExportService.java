@@ -21,6 +21,12 @@ import oop.io.demo.user.UserRepository;
 import oop.io.demo.pass.Pass;
 import oop.io.demo.pass.PassRepository;
 
+import java.io.*;
+import java.net.URL;
+import java.nio.file.Paths;
+import java.net.MalformedURLException;
+import org.apache.commons.io.FileUtils;
+
 @Service
 public class CsvExportService {
 
@@ -131,4 +137,119 @@ public class CsvExportService {
         }
         return output;
     }
+
+        //Export Email Templates
+        public String exportEmail(String attractionName) throws Exception{
+            try {
+                //Get webpage
+                Attraction attraction = attractionRepository.findByAttractionName(attractionName).get();
+                String templateName = attraction.getTemplateFilename();
+                String templatePath = attraction.getTemplateFilePath();
+
+                String webpage = templatePath + "/" + templateName;
+
+                URL url = new File(getClass().getResource(webpage).getFile()).toURI().toURL();
+                String strUrl1 = url.toString().replace("target/classes", "src/main/resources");
+                String strUrl2 = strUrl1.toString().replaceAll("%2520", "%20");
+
+                URL newUrl = new URL(strUrl2);
+                 
+                // Create URL object
+                BufferedReader readr = 
+                  new BufferedReader(new InputStreamReader(newUrl.openStream()));
+      
+                // Enter filename in which you want to download
+                //Specify the file name and path here
+                String writeFilePath = (newUrl.getPath().split("Documents"))[0] + "Desktop/" + templateName;
+                File file = new File(writeFilePath);
+
+                /* This logic will make sure that the file 
+                * gets created if it is not present at the
+                * specified location*/
+                if (!file.exists()) {
+                    file.createNewFile();
+                }
+
+                BufferedWriter writer = 
+                  new BufferedWriter(new FileWriter(file));
+                  
+                // read each line from stream till end
+                String line;
+                while ((line = readr.readLine()) != null) {
+                    writer.write(line);
+                }
+      
+                readr.close();
+                writer.close();
+                
+                return "Successfully Downloaded Email Template.";
+            }
+      
+            // Exceptions
+            catch (MalformedURLException mue) {
+                return "Malformed URL Exception raised";
+            }
+            catch (IOException ie) {
+                ie.printStackTrace();
+                return "IOException raised";
+            }
+        }
+        
+        //Export Attachment
+        public String exportAttachment(String attractionName) throws Exception{
+            try {
+                //Get webpage
+                Attraction attraction = attractionRepository.findByAttractionName(attractionName).get();
+                String attachmentName = attraction.getAttachmentPDFFilename();
+                String attachmentPath = attraction.getAttachmentPDFFilePath();
+
+                String webpage = attachmentPath + "/" + attachmentName;
+
+                File source = new File(getClass().getResource(webpage).getFile().replaceAll("%20", " "));
+                String srcLink = source.getAbsolutePath();
+                String writeFilePath = (srcLink.split("Documents"))[0] + "Desktop\\" + attachmentName;
+                File dest = new File(writeFilePath);
+
+                FileUtils.copyFile(source, dest);
+                
+                return "Successfully Downloaded Attachment Template.";
+            }
+      
+            // Exceptions
+            catch (MalformedURLException mue) {
+                return "Malformed URL Exception raised";
+            }
+            catch (IOException ie) {
+                ie.printStackTrace();
+                return "IOException raised";
+            }
+        }
+
+        //Export Image
+        public String exportImage(String attractionName) throws Exception{
+            try {
+                //Get webpage
+                Attraction attraction = attractionRepository.findByAttractionName(attractionName).get();
+                String imageName = attraction.getImageFilename();
+                String imagePath = attraction.getImageFilePath().replace("/src/main/resources","");
+
+                File source = new File(getClass().getResource(imagePath).getFile().replaceAll("%20", " "));
+                String srcLink = source.getAbsolutePath();
+                String writeFilePath = (srcLink.split("Documents"))[0] + "Desktop\\" + imageName;
+                File dest = new File(writeFilePath);
+
+                FileUtils.copyFile(source, dest);
+                
+                return "Successfully Downloaded Image Template.";
+            }
+      
+            // Exceptions
+            catch (MalformedURLException mue) {
+                return "Malformed URL Exception raised";
+            }
+            catch (IOException ie) {
+                ie.printStackTrace();
+                return "IOException raised";
+            }
+        }
 }

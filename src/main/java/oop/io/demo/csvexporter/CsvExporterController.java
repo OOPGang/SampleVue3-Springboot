@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import oop.io.demo.auth.security.jwt.JwtUtils;
@@ -42,7 +43,7 @@ public class CsvExporterController {
         try{
             return ResponseEntity.ok(csvExportService.writeAttractionsToJSON());
         } catch (Exception e){
-            return ResponseEntity.ok("Attractions CSV not sent! :(");
+            return ResponseEntity.badRequest().body("Attractions CSV not sent! :(");
         }
     }
 
@@ -51,7 +52,7 @@ public class CsvExporterController {
         try{
             return ResponseEntity.ok(csvExportService.writePassesToJSON());
         } catch (Exception e){
-            return ResponseEntity.ok("Passes CSV not sent! :(");
+            return ResponseEntity.badRequest().body("Passes CSV not sent! :(");
         }
     }
 
@@ -60,7 +61,34 @@ public class CsvExporterController {
         try{
             return ResponseEntity.ok(csvExportService.writeUsersToJSON());
         } catch (Exception e){
-            return ResponseEntity.ok("Users CSV not sent! :(");
+            return ResponseEntity.badRequest().body("Users CSV not sent! :(");
+        }
+    }
+
+    @GetMapping("/emailTemplate")
+    public ResponseEntity exportEmailTemplate(@RequestParam("attractionName") String attractionName) throws Exception {
+        try{
+            return ResponseEntity.ok(csvExportService.exportEmail(attractionName));
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body("Email not exported! :(");
+        }
+    }
+
+    @GetMapping("/attachmentTemplate")
+    public ResponseEntity exportAttachment(@RequestParam("attractionName") String attractionName) throws Exception {
+        try{
+            return ResponseEntity.ok(csvExportService.exportAttachment(attractionName));
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body("Attachment not exported! :(");
+        }
+    }
+
+    @GetMapping("/imageTemplate")
+    public ResponseEntity exportImage(@RequestParam("attractionName") String attractionName) throws Exception {
+        try{
+            return ResponseEntity.ok(csvExportService.exportImage(attractionName));
+        } catch (Exception e){
+            return ResponseEntity.badRequest().body("Image not exported! :(");
         }
     }
 
