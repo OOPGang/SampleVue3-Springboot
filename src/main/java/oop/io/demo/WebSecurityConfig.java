@@ -18,8 +18,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.core.userdetails.User;
 
+import oop.io.demo.auth.security.cookie.AuthEntryPoint;
+import oop.io.demo.auth.security.cookie.CookieAuthenticationFilter;
 import oop.io.demo.auth.security.jwt.AuthEntryPointJwt;
-import oop.io.demo.auth.security.jwt.AuthTokenFilter;
 import oop.io.demo.auth.security.services.UserDetailServiceImplementation;
 import oop.io.demo.user.USERTYPE;
 
@@ -34,13 +35,16 @@ public class WebSecurityConfig {
     @Autowired
     UserDetailServiceImplementation userDetailsService;
   
-    @Autowired
-    private AuthEntryPointJwt unauthorizedHandler;
+    // @Autowired
+    // private AuthEntryPointJwt unauthorizedHandler;
 
-    @Bean
-    public AuthTokenFilter authenticationJwtTokenFilter() {
-      return new AuthTokenFilter();
-    }
+    @Autowired
+    private AuthEntryPoint unauthorizedHandler;
+
+    // @Bean
+    // public AuthTokenFilter authenticationJwtTokenFilter() {
+    //   return new AuthTokenFilter();
+    // }
     
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -68,13 +72,20 @@ public class WebSecurityConfig {
         return m;
     }
 
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-      http.cors().and().csrf().disable()
-          .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
-          .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+      http
+          .exceptionHandling().authenticationEntryPoint(unauthorizedHandler)
+          .and()
+          .addFilterBefore(new CookieAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
+          .cors().and().csrf().disable()
+          .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+          .and().logout()
+              .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
+              .logoutSuccessUrl("/login").deleteCookies(CookieAuthenticationFilter.COOKIE_NAME)
           
-            .authorizeRequests()
+          .and().authorizeRequests()
 
             //  .antMatchers(h2ConsolePath + "/**").permitAll()
             //FRONTENDENDPOINTS
@@ -88,11 +99,7 @@ public class WebSecurityConfig {
             .antMatchers("/corporate-pass-management/passes/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
             .antMatchers("/login").permitAll()
             .antMatchers("/register").permitAll()
-            .antMatchers("/authentication").permitAll()
-            .and().logout()
-              .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
-              .logoutSuccessUrl("/login")
-              .invalidateHttpSession(true).permitAll();
+            .antMatchers("/authentication").permitAll();
 
             //BACKENDENDPOINTS
             // .antMatchers("/uploadcsv/**").hasAnyAuthority(USERTYPE.ADMIN.toString())
@@ -129,9 +136,7 @@ public class WebSecurityConfig {
             //   .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
             //   .logoutSuccessUrl("/login")
             //   .invalidateHttpSession(true).permitAll();
-  
-        http.addFilterBefore(authenticationJwtTokenFilter(), UsernamePasswordAuthenticationFilter.class);
-      
+        
         return http.build();
     }
 }

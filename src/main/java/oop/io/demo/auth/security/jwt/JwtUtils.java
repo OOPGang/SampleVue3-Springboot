@@ -22,10 +22,8 @@ import oop.io.demo.auth.security.services.UserDetailImplementation;
 public class JwtUtils {
     private static final Logger logger = LoggerFactory.getLogger(JwtUtils.class);
 
-    //@Value("${ams.app.jwtSecret}")
     private static String jwtSecret= "yl123";
 
-    //@Value("${ams.app.jwtExpirationMs}")
     private static int jwtExpirationMs = 86400000;
 
 

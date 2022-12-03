@@ -8,14 +8,19 @@
 
 package oop.io.demo.auth;
 
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -33,6 +38,7 @@ import oop.io.demo.auth.payload.request.LoginRequest;
 import oop.io.demo.auth.payload.request.SignupRequest;
 import oop.io.demo.auth.payload.response.JwtResponse;
 import oop.io.demo.auth.payload.response.MessageResponse;
+import oop.io.demo.auth.security.cookie.CookieAuthenticationFilter;
 import oop.io.demo.auth.security.jwt.JwtUtils;
 import oop.io.demo.auth.security.services.UserDetailImplementation;
 import oop.io.demo.exception.EmailFailToSendException;
@@ -64,7 +70,7 @@ public class AuthController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
+    public ResponseEntity authenticateUser(@RequestBody LoginRequest loginRequest, HttpServletResponse servletResponse) {
 
         /* if(!(loginRequest.getEmail().matches("[a-z0-9]+@sportsschool.edu.sg")) && !(loginRequest.getEmail().matches("[a-z0-9]+@nysi.org.sg"))){
             return ResponseEntity.badRequest().body(new MessageResponse("Error: Email is not a slay email!"));
@@ -81,11 +87,21 @@ public class AuthController {
             //we might want to have a button 'Resend email' which triggers a service to send an email with the link to complete registration
         }
 
-        String jwt = jwtUtils.generateJwtToken(authentication);
+        // String jwt = jwtUtils.generateJwtToken(authentication);
 
-        return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(),
-                                    userDetails.getName(),
-                                    userDetails.getAuthority()));
+        // return ResponseEntity.ok(new JwtResponse(jwt, userDetails.getUsername(),
+        //                             userDetails.getName(),
+        //                             userDetails.getAuthority()));
+
+        Cookie authCookie = new Cookie(CookieAuthenticationFilter.COOKIE_NAME, jwtUtils.generateJwtToken(authentication));
+        authCookie.setHttpOnly(true);
+        authCookie.setSecure(true);
+        authCookie.setMaxAge((int) Duration.of(1, ChronoUnit.DAYS).toSeconds());
+        authCookie.setPath("/");
+
+        servletResponse.addCookie(authCookie);
+
+        return ResponseEntity.ok(userDetails);
         }
 
         //this is the first step to signing up (just using name and email)
@@ -133,11 +149,10 @@ public class AuthController {
             return ResponseEntity.ok("Confirmed");
         }
 
-        @PostMapping("/signout")
-        public ResponseEntity<?> logoutUser() {
-        return ResponseEntity.ok()
-            .body(new MessageResponse("You've been signed out!"));
-
+        @PostMapping("/logout")
+        public ResponseEntity<?> logoutUser(@AuthenticationPrincipal UserDetailImplementation user) {
+            SecurityContextHolder.clearContext();
+            return ResponseEntity.noContent().build();
         }
 
 }
